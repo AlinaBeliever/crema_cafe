@@ -1,0 +1,1145 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Crema — Кав'ярня у Львові</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400;1,600&family=DM+Sans:wght@300;400;500&family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&display=swap" rel="stylesheet" />
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            espresso: '#1a0f07',
+            roast:    '#2c1a0e',
+            bark:     '#3d2512',
+            caramel:  '#c8813a',
+            cream:    '#f2e4cc',
+            parchment:'#e8d5b2',
+            fog:      '#b8a89a',
+          },
+          fontFamily: {
+            display: ['Playfair Display', 'serif'],
+            body:    ['DM Sans', 'sans-serif'],
+            serif:   ['Cormorant Garamond', 'serif'],
+          },
+        }
+      }
+    }
+  </script>
+
+  <style>
+    :root {
+      --espresso: #1a0f07;
+      --roast:    #2c1a0e;
+      --bark:     #3d2512;
+      --caramel:  #c8813a;
+      --cream:    #f2e4cc;
+      --fog:      #b8a89a;
+    }
+    html { scroll-behavior: smooth; }
+    body { background: var(--espresso); color: var(--cream); font-family: 'DM Sans', sans-serif; }
+
+    /* Noise texture overlay */
+    body::before {
+      content: '';
+      position: fixed; inset: 0; z-index: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+      pointer-events: none;
+    }
+
+    /* ===== SCROLL ANIMATIONS ===== */
+    .reveal { opacity: 0; transform: translateY(36px); transition: opacity .75s ease, transform .75s ease; }
+    .reveal.visible { opacity: 1; transform: none; }
+    .reveal-left { opacity: 0; transform: translateX(-40px); transition: opacity .7s ease, transform .7s ease; }
+    .reveal-left.visible { opacity: 1; transform: none; }
+    .reveal-right { opacity: 0; transform: translateX(40px); transition: opacity .7s ease, transform .7s ease; }
+    .reveal-right.visible { opacity: 1; transform: none; }
+
+    /* ===== HEADER ===== */
+    header { background: rgba(26,15,7,.85); backdrop-filter: blur(18px); border-bottom: 1px solid rgba(200,129,58,.12); }
+
+    /* ===== NAV LINK ===== */
+    .nav-link { position: relative; color: var(--fog); transition: color .3s; }
+    .nav-link::after { content:''; position:absolute; bottom:-3px; left:0; width:0; height:1px; background:var(--caramel); transition: width .35s; }
+    .nav-link:hover { color: var(--cream); }
+    .nav-link:hover::after { width:100%; }
+
+    /* ===== HERO ===== */
+    .hero-bg {
+      background: radial-gradient(ellipse 80% 60% at 60% 40%, rgba(200,129,58,.18) 0%, transparent 70%),
+                  radial-gradient(ellipse 50% 50% at 10% 80%, rgba(61,37,18,.6) 0%, transparent 60%),
+                  linear-gradient(160deg, #2c1a0e 0%, #1a0f07 60%, #0f0805 100%);
+    }
+    .hero-circle {
+      position: absolute; border-radius: 50%; border: 1px solid rgba(200,129,58,.15);
+    }
+
+    /* ===== BUTTONS ===== */
+    .btn-primary {
+      background: linear-gradient(135deg, #c8813a, #a86428);
+      color: #fff; border-radius: 9999px; padding: .85rem 2.2rem;
+      font-family: 'DM Sans'; font-weight: 500; letter-spacing:.04em;
+      transition: transform .25s, box-shadow .25s, filter .25s;
+      box-shadow: 0 4px 24px rgba(200,129,58,.35);
+    }
+    .btn-primary:hover { transform: translateY(-2px); filter: brightness(1.1); box-shadow: 0 8px 32px rgba(200,129,58,.45); }
+
+    .btn-outline {
+      border: 1px solid rgba(200,129,58,.5); color: var(--caramel); border-radius: 9999px;
+      padding: .75rem 2rem; font-family: 'DM Sans'; font-weight: 500; letter-spacing:.04em;
+      transition: background .3s, color .3s, border-color .3s;
+    }
+    .btn-outline:hover { background: rgba(200,129,58,.12); border-color: var(--caramel); color: var(--cream); }
+
+    /* ===== MENU CARD ===== */
+    .menu-card {
+      background: rgba(44,26,14,.6);
+      border: 1px solid rgba(200,129,58,.12);
+      border-radius: 1.25rem;
+      transition: border-color .35s, transform .35s, box-shadow .35s;
+      backdrop-filter: blur(8px);
+    }
+    .menu-card:hover { border-color: rgba(200,129,58,.45); transform: translateY(-4px); box-shadow: 0 12px 40px rgba(0,0,0,.4); }
+
+    /* ===== GALLERY IMAGE WRAPPERS ===== */
+    .gallery-img-wrap { position: relative; }
+    .gallery-img-wrap img { transition: transform .6s ease; }
+    .gallery-img-wrap:hover img { transform: scale(1.07); }
+    .gallery-caption {
+      position: absolute; bottom: 0; left: 0; right: 0;
+      padding: .6rem 1rem;
+      background: linear-gradient(0deg, rgba(15,8,3,.85) 0%, transparent 100%);
+      color: var(--fog); font-family: 'Cormorant Garamond', serif;
+      font-style: italic; font-size: .85rem;
+      opacity: 0; transition: opacity .3s;
+      border-radius: 0 0 1.25rem 1.25rem;
+    }
+    .gallery-img-wrap:hover .gallery-caption { opacity: 1; }
+
+    /* ===== GALLERY ===== */
+    .gallery-item { border-radius: 1.25rem; overflow: hidden; }
+    .gallery-item img { width:100%; height:100%; object-fit:cover; transition: transform .6s ease; }
+    .gallery-item:hover img { transform: scale(1.07); }
+    .gallery-placeholder {
+      border-radius: 1.25rem;
+      transition: transform .4s;
+    }
+    .gallery-placeholder:hover { transform: scale(1.02); }
+
+    /* ===== REVIEW CARD ===== */
+    .review-card {
+      background: rgba(44,26,14,.55);
+      border: 1px solid rgba(200,129,58,.1);
+      border-radius: 1.5rem;
+      backdrop-filter: blur(8px);
+      transition: border-color .3s, transform .3s;
+    }
+    .review-card:hover { border-color: rgba(200,129,58,.3); transform: translateY(-3px); }
+
+    /* ===== DIVIDER ===== */
+    .caramel-line { height:1px; background: linear-gradient(90deg, transparent, rgba(200,129,58,.5), transparent); }
+
+    /* ===== FORM ===== */
+    .form-input {
+      background: rgba(44,26,14,.7); border: 1px solid rgba(200,129,58,.2);
+      border-radius: .75rem; color: var(--cream); padding: .85rem 1.1rem;
+      width: 100%; font-family: 'DM Sans'; transition: border-color .3s, box-shadow .3s;
+      outline: none;
+    }
+    .form-input::placeholder { color: var(--fog); }
+    .form-input:focus { border-color: var(--caramel); box-shadow: 0 0 0 3px rgba(200,129,58,.15); }
+    .form-input.error { border-color: #e57373; }
+    .error-msg { color: #e57373; font-size: .8rem; margin-top: .3rem; display:none; }
+    .error-msg.show { display:block; }
+
+    /* ===== MOBILE MENU ===== */
+    #mobile-menu { transition: max-height .4s ease, opacity .4s ease; max-height: 0; opacity:0; overflow:hidden; }
+    #mobile-menu.open { max-height: 400px; opacity:1; }
+
+    /* Star rating */
+    .star { color: var(--caramel); }
+
+    /* Decorative quote */
+    .quote-mark { font-family: 'Playfair Display'; font-size:5rem; line-height:1; color: rgba(200,129,58,.15); position:absolute; top:-1rem; left:-.5rem; }
+
+    /* Floating badge */
+    @keyframes float { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-10px)} }
+    .float-badge { animation: float 4s ease-in-out infinite; }
+
+    /* Gradient text */
+    .text-gradient {
+      background: linear-gradient(135deg, #f2e4cc 0%, #c8813a 50%, #f2e4cc 100%);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+    }
+
+    /* Section label */
+    .section-label { font-family:'DM Sans'; font-size:.75rem; letter-spacing:.18em; text-transform:uppercase; color:var(--caramel); }
+  </style>
+</head>
+<body class="relative z-10">
+
+<!-- ===================== HEADER ===================== -->
+<header class="fixed top-0 inset-x-0 z-50">
+  <div class="max-w-7xl mx-auto px-5 sm:px-8 flex items-center justify-between h-16 sm:h-18">
+
+    <!-- Logo -->
+    <a href="#" class="flex items-center gap-2.5 group">
+      <div class="w-9 h-9 rounded-full flex items-center justify-center" style="background:linear-gradient(135deg,#c8813a,#7a4a1c)">
+        <i data-lucide="coffee" class="w-4.5 h-4.5 text-white" style="width:18px;height:18px"></i>
+      </div>
+      <span class="font-display text-xl font-semibold tracking-wide text-cream">Crema</span>
+    </a>
+
+    <!-- Desktop nav -->
+    <nav class="hidden md:flex items-center gap-8">
+      <a href="#menu"     class="nav-link text-sm">Меню</a>
+      <a href="#about"    class="nav-link text-sm">Про нас</a>
+      <a href="#gallery"  class="nav-link text-sm">Галерея</a>
+      <a href="#reviews"  class="nav-link text-sm">Відгуки</a>
+      <a href="#contact"  class="nav-link text-sm">Контакти</a>
+    </nav>
+
+    <!-- CTA + burger -->
+    <div class="flex items-center gap-3">
+      <a href="#booking" class="hidden sm:inline-block btn-primary text-sm">Забронювати</a>
+      <button id="burger" class="md:hidden p-2 text-fog hover:text-cream transition-colors">
+        <i data-lucide="menu" style="width:22px;height:22px"></i>
+      </button>
+    </div>
+  </div>
+
+  <!-- Mobile menu -->
+  <div id="mobile-menu" class="md:hidden" style="background:rgba(26,15,7,.97);backdrop-filter:blur(18px)">
+    <div class="px-5 py-4 flex flex-col gap-3 border-t" style="border-color:rgba(200,129,58,.1)">
+      <a href="#menu"    class="nav-link text-sm py-2">Меню</a>
+      <a href="#about"   class="nav-link text-sm py-2">Про нас</a>
+      <a href="#gallery" class="nav-link text-sm py-2">Галерея</a>
+      <a href="#reviews" class="nav-link text-sm py-2">Відгуки</a>
+      <a href="#contact" class="nav-link text-sm py-2">Контакти</a>
+      <a href="#booking" class="btn-primary text-sm text-center mt-2">Забронювати стіл</a>
+    </div>
+  </div>
+</header>
+
+<!-- ===================== HERO ===================== -->
+<section class="hero-bg relative min-h-screen flex items-center overflow-hidden pt-16">
+
+  <!-- Decorative circles -->
+  <div class="hero-circle" style="width:600px;height:600px;top:-100px;right:-150px;opacity:.3"></div>
+  <div class="hero-circle" style="width:350px;height:350px;bottom:80px;left:-80px;opacity:.2"></div>
+  <div class="hero-circle" style="width:160px;height:160px;top:30%;right:15%;border-color:rgba(200,129,58,.3);opacity:1"></div>
+
+  <!-- Floating badge -->
+  <div class="float-badge absolute top-28 right-6 sm:right-16 sm:top-36 hidden sm:flex flex-col items-center justify-center w-24 h-24 rounded-full border text-center"
+       style="border-color:rgba(200,129,58,.4);background:rgba(44,26,14,.6);backdrop-filter:blur(12px)">
+    <span class="text-xs text-fog leading-tight">Відкрито</span>
+    <span class="font-display text-xs text-caramel font-semibold leading-tight">8:00–22:00</span>
+  </div>
+
+  <div class="relative z-10 max-w-7xl mx-auto px-5 sm:px-8 py-20 sm:py-28 grid md:grid-cols-2 gap-12 items-center">
+    <!-- Text -->
+    <div>
+      <p class="section-label reveal mb-5">Lviv · Since 2019</p>
+      <h1 class="font-display text-5xl sm:text-6xl lg:text-7xl font-semibold leading-[1.05] reveal" style="transition-delay:.1s">
+        Смак,<br/>
+        <em class="text-gradient not-italic">що лишається</em><br/>
+        у серці
+      </h1>
+      <p class="mt-6 text-fog text-lg max-w-md leading-relaxed reveal" style="transition-delay:.2s">
+        Кав'ярня Crema — місце, де кожна чашка готується з любов'ю, а час зупиняється в теплому серці Львова.
+      </p>
+      <div class="mt-10 flex flex-wrap gap-4 reveal" style="transition-delay:.3s">
+        <a href="#booking" class="btn-primary text-base">Забронювати стіл</a>
+        <a href="#menu"    class="btn-outline text-base">Переглянути меню</a>
+      </div>
+      <!-- Stats -->
+      <div class="mt-14 flex gap-10 reveal" style="transition-delay:.4s">
+        <div>
+          <p class="font-display text-3xl font-semibold text-caramel">5+</p>
+          <p class="text-fog text-sm mt-1">років роботи</p>
+        </div>
+        <div class="w-px" style="background:rgba(200,129,58,.2)"></div>
+        <div>
+          <p class="font-display text-3xl font-semibold text-caramel">40+</p>
+          <p class="text-fog text-sm mt-1">позицій меню</p>
+        </div>
+        <div class="w-px" style="background:rgba(200,129,58,.2)"></div>
+        <div>
+          <p class="font-display text-3xl font-semibold text-caramel">4.9★</p>
+          <p class="text-fog text-sm mt-1">рейтинг Google</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Hero visual -->
+    <div class="relative hidden md:flex justify-center items-center">
+      <!-- Glow ring -->
+      <div class="absolute w-80 h-80 lg:w-[420px] lg:h-[420px] rounded-full"
+           style="background:radial-gradient(circle,rgba(200,129,58,.18) 0%,transparent 70%);border:1px solid rgba(200,129,58,.15)"></div>
+      <!-- Photo frame -->
+      <div class="relative w-64 h-80 lg:w-80 lg:h-[420px] rounded-3xl overflow-hidden"
+           style="box-shadow:0 32px 80px rgba(0,0,0,.6),0 0 0 1px rgba(200,129,58,.2)">
+        <img src="https://images.unsplash.com/photo-1461023058943-07fcbe16d735?w=700&h=900&fit=crop&q=90"
+             alt="Чашка кави Crema"
+             style="width:100%;height:100%;object-fit:cover;display:block" />
+        <!-- Warm dark overlay at bottom -->
+        <div style="position:absolute;inset:0;background:linear-gradient(0deg,rgba(26,15,7,.55) 0%,transparent 50%)"></div>
+        <!-- Small label on photo -->
+        <div style="position:absolute;bottom:1.25rem;left:1.25rem;right:1.25rem">
+          <p style="font-family:'Cormorant Garamond',serif;font-style:italic;color:rgba(242,228,204,.85);font-size:.95rem">Смак, що залишається</p>
+        </div>
+      </div>
+      <!-- Orbiting decorative dots -->
+      <div class="absolute w-3 h-3 rounded-full bg-caramel opacity-70" style="top:2rem;right:3rem"></div>
+      <div class="absolute w-2 h-2 rounded-full bg-fog opacity-50" style="bottom:2.5rem;left:2rem"></div>
+      <div class="absolute w-5 h-5 rounded-full opacity-40" style="bottom:4rem;right:1rem;border:1px solid var(--caramel)"></div>
+      <div class="absolute w-2 h-2 rounded-full opacity-50" style="top:5rem;left:3rem;background:var(--caramel)"></div>
+    </div>
+  </div>
+
+  <!-- Scroll indicator -->
+  <div class="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 opacity-50">
+    <span class="text-xs text-fog tracking-widest">SCROLL</span>
+    <i data-lucide="chevron-down" style="width:16px;height:16px;color:var(--caramel)"></i>
+  </div>
+</section>
+
+<!-- ===================== MENU ===================== -->
+<section id="menu" class="py-24 sm:py-32" style="background:linear-gradient(180deg,#1a0f07 0%,#1f1209 100%)">
+  <div class="max-w-7xl mx-auto px-5 sm:px-8">
+
+    <div class="text-center mb-16 reveal">
+      <p class="section-label mb-3">Наше меню</p>
+      <h2 class="font-display text-4xl sm:text-5xl font-semibold">Кожен ковток — <em class="text-caramel">подія</em></h2>
+      <p class="text-fog mt-4 max-w-xl mx-auto">Зерно з п'яти континентів, рецептури бариста із міжнародним досвідом</p>
+    </div>
+
+    <!-- Category tabs -->
+    <div class="flex flex-wrap justify-center gap-2 mb-12 reveal">
+      <button onclick="switchTab('coffee')" id="tab-coffee"
+        class="tab-btn px-5 py-2 rounded-full text-sm font-medium transition-all active-tab">☕ Кава</button>
+      <button onclick="switchTab('cold')" id="tab-cold"
+        class="tab-btn px-5 py-2 rounded-full text-sm font-medium transition-all">🧊 Холодні напої</button>
+      <button onclick="switchTab('desserts')" id="tab-desserts"
+        class="tab-btn px-5 py-2 rounded-full text-sm font-medium transition-all">🍰 Десерти</button>
+      <button onclick="switchTab('food')" id="tab-food"
+        class="tab-btn px-5 py-2 rounded-full text-sm font-medium transition-all">🥐 Їжа</button>
+    </div>
+
+    <!-- Coffee -->
+    <div id="cat-coffee" class="menu-cat grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
+      <div class="menu-card p-6 reveal">
+        <div class="flex justify-between items-start mb-3">
+          <h3 class="font-display text-lg font-semibold text-cream">Еспресо</h3>
+          <span class="text-caramel font-semibold text-lg">60 ₴</span>
+        </div>
+        <p class="text-fog text-sm leading-relaxed">Класичний двійний шот із бленду Ethiopian + Brazilian. Насичений, з нотками темного шоколаду.</p>
+        <div class="mt-4 flex gap-2"><span class="text-xs px-2.5 py-1 rounded-full" style="background:rgba(200,129,58,.12);color:var(--caramel)">Класика</span></div>
+      </div>
+      <div class="menu-card p-6 reveal" style="transition-delay:.1s">
+        <div class="flex justify-between items-start mb-3">
+          <h3 class="font-display text-lg font-semibold text-cream">Капучіно</h3>
+          <span class="text-caramel font-semibold text-lg">85 ₴</span>
+        </div>
+        <p class="text-fog text-sm leading-relaxed">Еспресо з ніжною мікропінкою з місцевого оатмілк. Текстура як шовк, смак — як ранок.</p>
+        <div class="mt-4 flex gap-2"><span class="text-xs px-2.5 py-1 rounded-full" style="background:rgba(200,129,58,.12);color:var(--caramel)">Популярне</span></div>
+      </div>
+      <div class="menu-card p-6 reveal" style="transition-delay:.2s">
+        <div class="flex justify-between items-start mb-3">
+          <h3 class="font-display text-lg font-semibold text-cream">Флет Вайт</h3>
+          <span class="text-caramel font-semibold text-lg">90 ₴</span>
+        </div>
+        <p class="text-fog text-sm leading-relaxed">Подвійний рістретто + мінімум молока. Для тих, хто цінує концентрований кавовий характер.</p>
+        <div class="mt-4 flex gap-2"><span class="text-xs px-2.5 py-1 rounded-full" style="background:rgba(200,129,58,.12);color:var(--caramel)">Хіт</span></div>
+      </div>
+      <div class="menu-card p-6 reveal" style="transition-delay:.1s">
+        <div class="flex justify-between items-start mb-3">
+          <h3 class="font-display text-lg font-semibold text-cream">Лате</h3>
+          <span class="text-caramel font-semibold text-lg">80 ₴</span>
+        </div>
+        <p class="text-fog text-sm leading-relaxed">М'який еспресо з великою кількістю парного молока і тонкою пінкою зверху.</p>
+        <div class="mt-4 flex gap-2"><span class="text-xs px-2.5 py-1 rounded-full" style="background:rgba(200,129,58,.12);color:var(--caramel)">М'який</span></div>
+      </div>
+      <div class="menu-card p-6 reveal" style="transition-delay:.2s">
+        <div class="flex justify-between items-start mb-3">
+          <h3 class="font-display text-lg font-semibold text-cream">Americano</h3>
+          <span class="text-caramel font-semibold text-lg">70 ₴</span>
+        </div>
+        <p class="text-fog text-sm leading-relaxed">Еспресо розведений гарячою водою. Чистий смак без зайвого.</p>
+        <div class="mt-4 flex gap-2"><span class="text-xs px-2.5 py-1 rounded-full" style="background:rgba(200,129,58,.12);color:var(--caramel)">Класика</span></div>
+      </div>
+      <div class="menu-card p-6 reveal" style="transition-delay:.3s">
+        <div class="flex justify-between items-start mb-3">
+          <h3 class="font-display text-lg font-semibold text-cream">Авторський лате</h3>
+          <span class="text-caramel font-semibold text-lg">105 ₴</span>
+        </div>
+        <p class="text-fog text-sm leading-relaxed">Еспресо + лавандовий сироп + вівсяне молоко + квіткова пінка. Сезонна пропозиція.</p>
+        <div class="mt-4 flex gap-2"><span class="text-xs px-2.5 py-1 rounded-full" style="background:rgba(200,129,58,.12);color:var(--caramel)">Авторське</span></div>
+      </div>
+    </div>
+
+    <!-- Cold drinks -->
+    <div id="cat-cold" class="menu-cat hidden grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
+      <div class="menu-card p-6 reveal">
+        <div class="flex justify-between items-start mb-3">
+          <h3 class="font-display text-lg font-semibold text-cream">Айс Лате</h3>
+          <span class="text-caramel font-semibold text-lg">95 ₴</span>
+        </div>
+        <p class="text-fog text-sm leading-relaxed">Еспресо на льоду з вершковим молоком. Освіжаючий та насичений одночасно.</p>
+      </div>
+      <div class="menu-card p-6 reveal" style="transition-delay:.1s">
+        <div class="flex justify-between items-start mb-3">
+          <h3 class="font-display text-lg font-semibold text-cream">Cold Brew</h3>
+          <span class="text-caramel font-semibold text-lg">100 ₴</span>
+        </div>
+        <p class="text-fog text-sm leading-relaxed">Холодне заварювання 18 годин. Шовковиста текстура, нульова кислотність.</p>
+        <div class="mt-4 flex gap-2"><span class="text-xs px-2.5 py-1 rounded-full" style="background:rgba(200,129,58,.12);color:var(--caramel)">Хіт літа</span></div>
+      </div>
+      <div class="menu-card p-6 reveal" style="transition-delay:.2s">
+        <div class="flex justify-between items-start mb-3">
+          <h3 class="font-display text-lg font-semibold text-cream">Матча лате</h3>
+          <span class="text-caramel font-semibold text-lg">110 ₴</span>
+        </div>
+        <p class="text-fog text-sm leading-relaxed">Церемоніальна матча з Японії, вівсяне молоко, лід. Для відданих шанувальників.</p>
+      </div>
+    </div>
+
+    <!-- Desserts -->
+    <div id="cat-desserts" class="menu-cat hidden grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
+      <div class="menu-card p-6 reveal">
+        <div class="flex justify-between items-start mb-3">
+          <h3 class="font-display text-lg font-semibold text-cream">Тірамісу</h3>
+          <span class="text-caramel font-semibold text-lg">120 ₴</span>
+        </div>
+        <p class="text-fog text-sm leading-relaxed">Класичний за рецептом нашого шефа. Маскарпоне, савоярді, ristretto.</p>
+        <div class="mt-4"><span class="text-xs px-2.5 py-1 rounded-full" style="background:rgba(200,129,58,.12);color:var(--caramel)">Бестселер</span></div>
+      </div>
+      <div class="menu-card p-6 reveal" style="transition-delay:.1s">
+        <div class="flex justify-between items-start mb-3">
+          <h3 class="font-display text-lg font-semibold text-cream">Шоколадний браунні</h3>
+          <span class="text-caramel font-semibold text-lg">90 ₴</span>
+        </div>
+        <p class="text-fog text-sm leading-relaxed">Темний бельгійський шоколад, хрустка скоринка, м'яка серцевина. Подається теплим.</p>
+      </div>
+      <div class="menu-card p-6 reveal" style="transition-delay:.2s">
+        <div class="flex justify-between items-start mb-3">
+          <h3 class="font-display text-lg font-semibold text-cream">Чізкейк</h3>
+          <span class="text-caramel font-semibold text-lg">110 ₴</span>
+        </div>
+        <p class="text-fog text-sm leading-relaxed">Без випікання, з ягідним кулі. Легкий та оксамитово-ніжний.</p>
+      </div>
+      <div class="menu-card p-6 reveal" style="transition-delay:.1s">
+        <div class="flex justify-between items-start mb-3">
+          <h3 class="font-display text-lg font-semibold text-cream">Каннолі</h3>
+          <span class="text-caramel font-semibold text-lg">95 ₴</span>
+        </div>
+        <p class="text-fog text-sm leading-relaxed">Сицилійський десерт із рікотою та цедрою лимону. Хрустка оболонка.</p>
+      </div>
+    </div>
+
+    <!-- Food -->
+    <div id="cat-food" class="menu-cat hidden grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
+      <div class="menu-card p-6 reveal">
+        <div class="flex justify-between items-start mb-3">
+          <h3 class="font-display text-lg font-semibold text-cream">Круасан з мигдалем</h3>
+          <span class="text-caramel font-semibold text-lg">75 ₴</span>
+        </div>
+        <p class="text-fog text-sm leading-relaxed">Свіжоспечений, маслянистий, з мигдальним кремом. Щодня нова випічка з 8:00.</p>
+        <div class="mt-4"><span class="text-xs px-2.5 py-1 rounded-full" style="background:rgba(200,129,58,.12);color:var(--caramel)">Свіжа випічка</span></div>
+      </div>
+      <div class="menu-card p-6 reveal" style="transition-delay:.1s">
+        <div class="flex justify-between items-start mb-3">
+          <h3 class="font-display text-lg font-semibold text-cream">Авокадо тост</h3>
+          <span class="text-caramel font-semibold text-lg">145 ₴</span>
+        </div>
+        <p class="text-fog text-sm leading-relaxed">Тост із ремісничим хлібом, пюре авокадо, яйце пашот, мікрогрін, чилі.</p>
+      </div>
+      <div class="menu-card p-6 reveal" style="transition-delay:.2s">
+        <div class="flex justify-between items-start mb-3">
+          <h3 class="font-display text-lg font-semibold text-cream">Гранола боул</h3>
+          <span class="text-caramel font-semibold text-lg">120 ₴</span>
+        </div>
+        <p class="text-fog text-sm leading-relaxed">Домашня гранола, грецький йогурт, сезонні ягоди, мед та горіхи.</p>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ===================== ABOUT / FEATURES ===================== -->
+<section id="about" class="py-24 sm:py-32" style="background:#1f1209">
+  <div class="max-w-7xl mx-auto px-5 sm:px-8">
+    <div class="grid lg:grid-cols-2 gap-16 items-center mb-20">
+      <!-- Text -->
+      <div class="reveal-left">
+        <p class="section-label mb-4">Наша історія</p>
+        <h2 class="font-display text-4xl sm:text-5xl font-semibold leading-tight">
+          Народжена у серці<br/><em class="text-caramel">старого Львова</em>
+        </h2>
+        <p class="text-fog mt-6 text-base leading-relaxed">
+          Crema відкрилась 2019 року на вул. Дорошенка. Ми вірили — місто гідне кави без компромісів. Сьогодні ми обсмажуємо зерно власноруч, навчаємо бариста мистецтву, а кожен відвідувач отримує не просто каву, а досвід.
+        </p>
+        <p class="text-fog mt-4 text-base leading-relaxed">
+          Наш інтер'єр — ода бруклінському мінімалізму з австрійською кавовою культурою. Тепле дерево, відкриті полиці із зерном, м'який світло — атмосфера, в якій хочеться залишитись.
+        </p>
+        <div class="caramel-line mt-10 mb-10"></div>
+        <div class="flex gap-8">
+          <div>
+            <i data-lucide="map-pin" style="width:20px;height:20px;color:var(--caramel)" class="mb-2"></i>
+            <p class="text-sm text-fog">вул. Дорошенка 17,<br/>Львів, 79000</p>
+          </div>
+          <div>
+            <i data-lucide="clock" style="width:20px;height:20px;color:var(--caramel)" class="mb-2"></i>
+            <p class="text-sm text-fog">Пн–Пт: 8:00–22:00<br/>Сб–Нд: 9:00–23:00</p>
+          </div>
+        </div>
+      </div>
+      <!-- Visual grid -->
+      <div class="reveal-right grid grid-cols-2 gap-4">
+        <div class="rounded-2xl p-8 flex flex-col items-center text-center" style="background:rgba(200,129,58,.1);border:1px solid rgba(200,129,58,.2)">
+          <i data-lucide="award" style="width:32px;height:32px;color:var(--caramel)" class="mb-3"></i>
+          <p class="font-display text-2xl font-semibold text-cream">Best Café</p>
+          <p class="text-fog text-sm mt-1">Lviv Food Awards 2023</p>
+        </div>
+        <div class="rounded-2xl p-8 flex flex-col items-center text-center" style="background:rgba(44,26,14,.6);border:1px solid rgba(200,129,58,.12)">
+          <i data-lucide="leaf" style="width:32px;height:32px;color:var(--caramel)" class="mb-3"></i>
+          <p class="font-display text-2xl font-semibold text-cream">Organic</p>
+          <p class="text-fog text-sm mt-1">Сертифіковане зерно</p>
+        </div>
+        <div class="rounded-2xl p-8 flex flex-col items-center text-center" style="background:rgba(44,26,14,.6);border:1px solid rgba(200,129,58,.12)">
+          <i data-lucide="users" style="width:32px;height:32px;color:var(--caramel)" class="mb-3"></i>
+          <p class="font-display text-2xl font-semibold text-cream">10K+</p>
+          <p class="text-fog text-sm mt-1">відвідувачів на місяць</p>
+        </div>
+        <div class="rounded-2xl p-8 flex flex-col items-center text-center" style="background:rgba(200,129,58,.1);border:1px solid rgba(200,129,58,.2)">
+          <i data-lucide="heart" style="width:32px;height:32px;color:var(--caramel)" class="mb-3"></i>
+          <p class="font-display text-2xl font-semibold text-cream">Люди</p>
+          <p class="text-fog text-sm mt-1">Завжди на першому місці</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Features -->
+    <div class="caramel-line mb-20"></div>
+    <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
+      <div class="reveal p-6 rounded-2xl group cursor-default" style="border:1px solid rgba(200,129,58,.12);transition:all .3s" onmouseenter="this.style.background='rgba(200,129,58,.07)'" onmouseleave="this.style.background='transparent'">
+        <div class="w-12 h-12 rounded-xl flex items-center justify-center mb-5" style="background:rgba(200,129,58,.15)">
+          <i data-lucide="zap" style="width:22px;height:22px;color:var(--caramel)"></i>
+        </div>
+        <h3 class="font-display text-lg font-semibold text-cream mb-2">Свіже зерно</h3>
+        <p class="text-fog text-sm leading-relaxed">Обсмажуємо зерно власноруч двічі на тиждень. Завжди свіже, ніколи зі складу.</p>
+      </div>
+      <div class="reveal p-6 rounded-2xl group cursor-default" style="border:1px solid rgba(200,129,58,.12);transition:all .3s;transition-delay:.1s" onmouseenter="this.style.background='rgba(200,129,58,.07)'" onmouseleave="this.style.background='transparent'">
+        <div class="w-12 h-12 rounded-xl flex items-center justify-center mb-5" style="background:rgba(200,129,58,.15)">
+          <i data-lucide="wifi" style="width:22px;height:22px;color:var(--caramel)"></i>
+        </div>
+        <h3 class="font-display text-lg font-semibold text-cream mb-2">Швидкий Wi-Fi</h3>
+        <p class="text-fog text-sm leading-relaxed">500 Мбіт/с симетрично. Crema — ідеальне місце для ноутбука і думок.</p>
+      </div>
+      <div class="reveal p-6 rounded-2xl group cursor-default" style="border:1px solid rgba(200,129,58,.12);transition:all .3s;transition-delay:.2s" onmouseenter="this.style.background='rgba(200,129,58,.07)'" onmouseleave="this.style.background='transparent'">
+        <div class="w-12 h-12 rounded-xl flex items-center justify-center mb-5" style="background:rgba(200,129,58,.15)">
+          <i data-lucide="calendar" style="width:22px;height:22px;color:var(--caramel)"></i>
+        </div>
+        <h3 class="font-display text-lg font-semibold text-cream mb-2">Бронювання</h3>
+        <p class="text-fog text-sm leading-relaxed">Резервуйте столик онлайн або телефоном. Вечірні події щопятниці.</p>
+      </div>
+      <div class="reveal p-6 rounded-2xl group cursor-default" style="border:1px solid rgba(200,129,58,.12);transition:all .3s;transition-delay:.3s" onmouseenter="this.style.background='rgba(200,129,58,.07)'" onmouseleave="this.style.background='transparent'">
+        <div class="w-12 h-12 rounded-xl flex items-center justify-center mb-5" style="background:rgba(200,129,58,.15)">
+          <i data-lucide="sparkles" style="width:22px;height:22px;color:var(--caramel)"></i>
+        </div>
+        <h3 class="font-display text-lg font-semibold text-cream mb-2">Pet-friendly</h3>
+        <p class="text-fog text-sm leading-relaxed">Ваші улюбленці — наші гості. Вода та смаколики завжди готові.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== GALLERY ===================== -->
+<section id="gallery" class="py-24 sm:py-32" style="background:linear-gradient(180deg,#1f1209 0%,#1a0f07 100%)">
+  <div class="max-w-7xl mx-auto px-5 sm:px-8">
+    <div class="text-center mb-14 reveal">
+      <p class="section-label mb-3">Атмосфера</p>
+      <h2 class="font-display text-4xl sm:text-5xl font-semibold">Відчуй <em class="text-caramel">Crema</em></h2>
+    </div>
+
+    <!-- Mosaic gallery with real photos + lightbox -->
+    <div class="grid grid-cols-2 md:grid-cols-3 gap-4 reveal" style="grid-auto-rows:180px">
+
+      <!-- Item 1 - tall (span 2 rows): KEEP — espresso latte art -->
+      <div class="row-span-2 gallery-img-wrap overflow-hidden rounded-2xl cursor-pointer"
+           onclick="openLightbox('https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?w=1200&q=90','Наша кава')">
+        <img src="https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?w=700&h=740&fit=crop&q=85"
+             alt="Наша кава — капучіно з лате-артом"
+             loading="lazy" style="width:100%;height:100%;object-fit:cover;transition:transform .6s ease;display:block" />
+        <div class="gallery-caption">Наша кава</div>
+      </div>
+
+      <!-- Item 2: golden croissant on dark plate — Випічка -->
+      <div class="gallery-img-wrap overflow-hidden rounded-2xl cursor-pointer"
+           onclick="openLightbox('https://images.unsplash.com/photo-1608198093002-ad4e005484ec?w=1200&q=90','Свіжа випічка')">
+        <img src="https://images.unsplash.com/photo-1608198093002-ad4e005484ec?w=600&h=360&fit=crop&q=85"
+             alt="Свіжий круасан"
+             loading="lazy" style="width:100%;height:100%;object-fit:cover;transition:transform .6s ease;display:block" />
+        <div class="gallery-caption">Свіжа випічка</div>
+      </div>
+
+      <!-- Item 3: tiramisu dessert close-up — Десерти -->
+      <div class="gallery-img-wrap overflow-hidden rounded-2xl cursor-pointer"
+           onclick="openLightbox('https://images.unsplash.com/photo-1551024601-bec78aea704b?w=1200&q=90','Десерти')">
+        <img src="https://images.unsplash.com/photo-1551024601-bec78aea704b?w=600&h=360&fit=crop&q=85"
+             alt="Десерти Crema"
+             loading="lazy" style="width:100%;height:100%;object-fit:cover;transition:transform .6s ease;display:block" />
+        <div class="gallery-caption">Десерти</div>
+      </div>
+
+      <!-- Item 4: warm cozy café table with book & coffee — Читати й пити -->
+      <div class="gallery-img-wrap overflow-hidden rounded-2xl cursor-pointer"
+           onclick="openLightbox('https://images.unsplash.com/photo-1600093463592-8e36ae95ef56?w=1200&q=90','Читати й пити')">
+        <img src="https://images.unsplash.com/photo-1600093463592-8e36ae95ef56?w=600&h=360&fit=crop&q=85"
+             alt="Книга і кава — читати й пити"
+             loading="lazy" style="width:100%;height:100%;object-fit:cover;transition:transform .6s ease;display:block" />
+        <div class="gallery-caption">Читати й пити</div>
+      </div>
+
+      <!-- Item 5 - tall (span 2 rows): KEEP — exterior of café storefront Lviv -->
+      <div class="row-span-2 gallery-img-wrap overflow-hidden rounded-2xl cursor-pointer"
+           onclick="openLightbox('https://images.unsplash.com/photo-1554118811-1e0d58224f24?w=1200&q=90','Наш інтер\'єр')">
+        <img src="https://images.unsplash.com/photo-1554118811-1e0d58224f24?w=700&h=740&fit=crop&q=85"
+             alt="Інтер'єр кав'ярні Crema"
+             loading="lazy" style="width:100%;height:100%;object-fit:cover;transition:transform .6s ease;display:block" />
+        <div class="gallery-caption">Наш інтер'єр</div>
+      </div>
+
+      <!-- Item 6: barista close-up steaming milk — Майстерність бариста -->
+      <div class="gallery-img-wrap overflow-hidden rounded-2xl cursor-pointer"
+           onclick="openLightbox('https://images.unsplash.com/photo-1453614512568-c4024d13c247?w=1200&q=90','Майстерність бариста')">
+        <img src="https://images.unsplash.com/photo-1453614512568-c4024d13c247?w=600&h=360&fit=crop&q=85"
+             alt="Бариста готує каву"
+             loading="lazy" style="width:100%;height:100%;object-fit:cover;transition:transform .6s ease;display:block" />
+        <div class="gallery-caption">Майстерність бариста</div>
+      </div>
+    </div>
+
+    <!-- LIGHTBOX -->
+    <div id="lightbox" onclick="closeLightbox()"
+         style="display:none;position:fixed;inset:0;z-index:9999;background:rgba(15,8,3,.95);backdrop-filter:blur(8px);align-items:center;justify-content:center;flex-direction:column;gap:1rem;cursor:zoom-out">
+      <button onclick="closeLightbox()" style="position:absolute;top:1.5rem;right:1.5rem;background:rgba(200,129,58,.2);border:1px solid rgba(200,129,58,.4);border-radius:50%;width:44px;height:44px;display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--cream)">
+        <i data-lucide="x" style="width:20px;height:20px"></i>
+      </button>
+      <img id="lightbox-img" src="" alt="" onclick="event.stopPropagation()"
+           style="max-width:90vw;max-height:80vh;border-radius:1rem;object-fit:contain;box-shadow:0 32px 80px rgba(0,0,0,.7);cursor:default" />
+      <p id="lightbox-caption" style="color:var(--fog);font-family:'Cormorant Garamond',serif;font-style:italic;font-size:1rem"></p>
+    </div>
+
+    <p class="text-center text-fog text-sm mt-8 reveal">Слідкуй за нами <a href="#" class="text-caramel hover:underline">@crema.lviv</a> в Instagram</p>
+  </div>
+</section>
+
+<!-- ===================== REVIEWS ===================== -->
+<section id="reviews" class="py-24 sm:py-32" style="background:#1a0f07">
+  <div class="max-w-7xl mx-auto px-5 sm:px-8">
+    <div class="text-center mb-14 reveal">
+      <p class="section-label mb-3">Відгуки</p>
+      <h2 class="font-display text-4xl sm:text-5xl font-semibold">Вони вже <em class="text-caramel">закохались</em></h2>
+    </div>
+
+    <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+
+      <div class="review-card p-7 relative reveal">
+        <span class="quote-mark">"</span>
+        <div class="flex gap-1 mb-4 mt-2">
+          <span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span>
+        </div>
+        <p class="text-cream text-base leading-relaxed font-serif italic">"Flat White у Crema — це стандарт, яким я тепер міряю всі інші кав'ярні у світі. Повертаюсь щоразу, як приїжджаю до Львова."</p>
+        <div class="mt-6 flex items-center gap-3">
+          <div class="w-10 h-10 rounded-full flex items-center justify-center font-display font-semibold text-espresso text-sm" style="background:var(--caramel)">ОМ</div>
+          <div>
+            <p class="text-cream text-sm font-medium">Олексій Мельник</p>
+            <p class="text-fog text-xs">Київ · Google Maps</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="review-card p-7 relative reveal" style="transition-delay:.1s">
+        <span class="quote-mark">"</span>
+        <div class="flex gap-1 mb-4 mt-2">
+          <span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span>
+        </div>
+        <p class="text-cream text-base leading-relaxed font-serif italic">"Тут зупиняється час. Приходжу зранку з ноутбуком — і раптом уже вечір. Атмосфера, кава, персонал — все на вищому рівні."</p>
+        <div class="mt-6 flex items-center gap-3">
+          <div class="w-10 h-10 rounded-full flex items-center justify-center font-display font-semibold text-espresso text-sm" style="background:var(--caramel)">СК</div>
+          <div>
+            <p class="text-cream text-sm font-medium">Софія Ковальчук</p>
+            <p class="text-fog text-xs">Львів · Instagram</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="review-card p-7 relative reveal" style="transition-delay:.2s">
+        <span class="quote-mark">"</span>
+        <div class="flex gap-1 mb-4 mt-2">
+          <span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span>
+        </div>
+        <p class="text-cream text-base leading-relaxed font-serif italic">"Тірамісу — найкращий в місті. Без перебільшень. Тісто розтає, кава насичена, подача елегантна. Браво!"</p>
+        <div class="mt-6 flex items-center gap-3">
+          <div class="w-10 h-10 rounded-full flex items-center justify-center font-display font-semibold text-espresso text-sm" style="background:var(--caramel)">ДП</div>
+          <div>
+            <p class="text-cream text-sm font-medium">Дарина Павленко</p>
+            <p class="text-fog text-xs">Варшава · TripAdvisor</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="review-card p-7 relative reveal" style="transition-delay:.1s">
+        <span class="quote-mark">"</span>
+        <div class="flex gap-1 mb-4 mt-2">
+          <span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span>
+        </div>
+        <p class="text-cream text-base leading-relaxed font-serif italic">"Персонал пам'ятає мій улюблений замовлення вже з другого візиту. Це рідкість і коштовність. Ось що таке справжнє кавовий заклад."</p>
+        <div class="mt-6 flex items-center gap-3">
+          <div class="w-10 h-10 rounded-full flex items-center justify-center font-display font-semibold text-espresso text-sm" style="background:var(--caramel)">ІГ</div>
+          <div>
+            <p class="text-cream text-sm font-medium">Іван Гриценко</p>
+            <p class="text-fog text-xs">Харків · Google Maps</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="review-card p-7 relative reveal" style="transition-delay:.2s">
+        <span class="quote-mark">"</span>
+        <div class="flex gap-1 mb-4 mt-2">
+          <span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span>
+        </div>
+        <p class="text-cream text-base leading-relaxed font-serif italic">"Cold Brew тут — не просто напій, це досвід. Приїхала з Берліна і не очікувала знайти таку якість у Львові. Приємне відкриття!"</p>
+        <div class="mt-6 flex items-center gap-3">
+          <div class="w-10 h-10 rounded-full flex items-center justify-center font-display font-semibold text-espresso text-sm" style="background:var(--caramel)">AW</div>
+          <div>
+            <p class="text-cream text-sm font-medium">Anna Weber</p>
+            <p class="text-fog text-xs">Berlin · TripAdvisor</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="review-card p-7 relative reveal" style="transition-delay:.3s">
+        <span class="quote-mark">"</span>
+        <div class="flex gap-1 mb-4 mt-2">
+          <span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span>
+        </div>
+        <p class="text-cream text-base leading-relaxed font-serif italic">"Смак як у Відні, атмосфера як у Парижі, ціни — як у Львові. Crema — місце, яке любиш одразу і назавжди."</p>
+        <div class="mt-6 flex items-center gap-3">
+          <div class="w-10 h-10 rounded-full flex items-center justify-center font-display font-semibold text-espresso text-sm" style="background:var(--caramel)">МБ</div>
+          <div>
+            <p class="text-cream text-sm font-medium">Марія Білик</p>
+            <p class="text-fog text-xs">Одеса · Instagram</p>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ===================== BOOKING ===================== -->
+<section id="booking" class="py-24 sm:py-32" style="background:linear-gradient(180deg,#1a0f07 0%,#1f1209 100%)">
+  <div class="max-w-2xl mx-auto px-5 sm:px-8">
+    <div class="text-center mb-12 reveal">
+      <p class="section-label mb-3">Резервація</p>
+      <h2 class="font-display text-4xl sm:text-5xl font-semibold">Забронювати <em class="text-caramel">стіл</em></h2>
+      <p class="text-fog mt-4">Підтвердження надійде протягом 30 хвилин</p>
+    </div>
+
+    <form id="booking-form" action="https://formspree.io/f/YOUR_FORM_ID" method="POST"
+          class="reveal space-y-5 p-8 rounded-3xl" style="background:rgba(44,26,14,.5);border:1px solid rgba(200,129,58,.18);backdrop-filter:blur(12px)">
+
+      <div class="grid sm:grid-cols-2 gap-5">
+        <div>
+          <label class="block text-sm text-fog mb-2">Ім'я *</label>
+          <input type="text" name="name" placeholder="Ваше ім'я" class="form-input" id="b-name" />
+          <p class="error-msg" id="err-name">Вкажіть ваше ім'я</p>
+        </div>
+      <div>
+        <label class="block text-sm text-fog mb-2">Телефон *</label>
+        <input type="tel" name="phone" placeholder="+380 XX XXX XX XX" class="form-input" id="b-phone" />
+        <p class="error-msg" id="err-phone">Вкажіть номер телефону</p>
+      </div>
+    </div>
+
+      <div class="grid sm:grid-cols-2 gap-5">
+        <div>
+          <label class="block text-sm text-fog mb-2">Дата *</label>
+          <input type="date" name="date" class="form-input" id="b-date" />
+          <p class="error-msg" id="err-date">Оберіть дату</p>
+        </div>
+        <div>
+          <label class="block text-sm text-fog mb-2">Час *</label>
+          <select name="time" class="form-input" id="b-time">
+            <option value="">Оберіть час</option>
+            <option>09:00</option><option>10:00</option><option>11:00</option>
+            <option>12:00</option><option>13:00</option><option>14:00</option>
+            <option>15:00</option><option>16:00</option><option>17:00</option>
+            <option>18:00</option><option>19:00</option><option>20:00</option>
+          </select>
+          <p class="error-msg" id="err-time">Оберіть час</p>
+        </div>
+      </div>
+
+      <div>
+        <label class="block text-sm text-fog mb-2">Кількість гостей *</label>
+        <select name="guests" class="form-input" id="b-guests">
+          <option value="">Оберіть кількість</option>
+          <option>1 особа</option><option>2 особи</option><option>3 особи</option>
+          <option>4 особи</option><option>5–6 осіб</option><option>7+ осіб</option>
+        </select>
+        <p class="error-msg" id="err-guests">Вкажіть кількість гостей</p>
+      </div>
+
+      <div>
+        <label class="block text-sm text-fog mb-2">Побажання</label>
+        <textarea name="message" rows="3" placeholder="Особливі побажання, алергії, привід..." class="form-input resize-none"></textarea>
+      </div>
+
+      <button type="submit" class="btn-primary w-full text-center text-base" id="submit-btn">
+        Забронювати стіл
+      </button>
+
+      <div id="form-success" class="hidden text-center py-4 rounded-2xl" style="background:rgba(200,129,58,.15);border:1px solid rgba(200,129,58,.3)">
+        <i data-lucide="check-circle" style="width:24px;height:24px;color:var(--caramel);display:inline-block;margin-bottom:.5rem"></i>
+        <p class="text-cream font-medium">Дякуємо! Підтвердження надійде скоро.</p>
+      </div>
+    </form>
+  </div>
+</section>
+
+<!-- ===================== CONTACT ===================== -->
+<section id="contact" class="py-20" style="background:#1f1209">
+  <div class="max-w-7xl mx-auto px-5 sm:px-8">
+    <div class="caramel-line mb-20"></div>
+    <div class="grid sm:grid-cols-3 gap-8 text-center">
+      <div class="reveal">
+        <i data-lucide="map-pin" style="width:28px;height:28px;color:var(--caramel);margin:0 auto 1rem"></i>
+        <h4 class="font-display text-lg font-semibold text-cream mb-2">Адреса</h4>
+        <p class="text-fog text-sm"><a href="https://maps.google.com/?q=вул.+Дорошенка+17,+Львів,+Україна" target="_blank" rel="noopener" class="hover:text-caramel transition-colors underline decoration-dotted underline-offset-2">вул. Дорошенка 17<br/>Львів, 79000, Україна</a></p>
+      </div>
+      <div class="reveal" style="transition-delay:.1s">
+        <i data-lucide="phone" style="width:28px;height:28px;color:var(--caramel);margin:0 auto 1rem"></i>
+        <h4 class="font-display text-lg font-semibold text-cream mb-2">Телефон</h4>
+        <p class="text-fog text-sm"><a href="tel:+380321234567" class="hover:text-caramel transition-colors">+38 (032) 123-45-67</a></p>
+      </div>
+      <div class="reveal" style="transition-delay:.2s">
+        <i data-lucide="mail" style="width:28px;height:28px;color:var(--caramel);margin:0 auto 1rem"></i>
+        <h4 class="font-display text-lg font-semibold text-cream mb-2">Email</h4>
+        <p class="text-fog text-sm"><a href="mailto:hello@crema.lviv.ua" class="hover:text-caramel transition-colors">hello@crema.lviv.ua</a></p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== FOOTER ===================== -->
+<footer style="background:#130a04;border-top:1px solid rgba(200,129,58,.1)">
+  <div class="max-w-7xl mx-auto px-5 sm:px-8 py-12">
+    <div class="flex flex-col md:flex-row justify-between items-center gap-8">
+
+      <!-- Logo & tagline -->
+      <div class="text-center md:text-left">
+        <div class="flex items-center justify-center md:justify-start gap-2.5 mb-3">
+          <div class="w-8 h-8 rounded-full flex items-center justify-center" style="background:linear-gradient(135deg,#c8813a,#7a4a1c)">
+            <i data-lucide="coffee" style="width:16px;height:16px;color:#fff"></i>
+          </div>
+          <span class="font-display text-xl font-semibold text-cream">Crema</span>
+        </div>
+        <p class="text-fog text-sm font-serif italic">"Кожна чашка — маленька поема"</p>
+      </div>
+
+      <!-- Nav -->
+      <nav class="flex flex-wrap justify-center gap-6">
+        <a href="#menu"    class="text-fog text-sm hover:text-caramel transition-colors">Меню</a>
+        <a href="#about"   class="text-fog text-sm hover:text-caramel transition-colors">Про нас</a>
+        <a href="#gallery" class="text-fog text-sm hover:text-caramel transition-colors">Галерея</a>
+        <a href="#reviews" class="text-fog text-sm hover:text-caramel transition-colors">Відгуки</a>
+        <a href="#booking" class="text-fog text-sm hover:text-caramel transition-colors">Бронювання</a>
+      </nav>
+
+      <!-- Socials -->
+      <div class="flex gap-3">
+        <!-- Instagram – base64 embedded -->
+        <a href="https://instagram.com/crema.lviv" target="_blank" rel="noopener" aria-label="Instagram"
+           class="w-10 h-10 rounded-full overflow-hidden flex items-center justify-center transition-all hover:scale-110"
+           style="border:1px solid rgba(200,129,58,.25);padding:2px"
+           onmouseenter="this.style.borderColor='var(--caramel)';this.style.background='rgba(200,129,58,.08)'"
+           onmouseleave="this.style.borderColor='rgba(200,129,58,.25)';this.style.background='transparent'">
+          <img src="data:image/jpeg;base64,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" alt="Instagram" style="width:26px;height:26px;object-fit:contain;border-radius:6px" />
+        </a>
+        <!-- Telegram – base64 embedded -->
+        <a href="https://t.me/crema_lviv" target="_blank" rel="noopener" aria-label="Telegram"
+           class="w-10 h-10 rounded-full overflow-hidden flex items-center justify-center transition-all hover:scale-110"
+           style="border:1px solid rgba(200,129,58,.25);padding:2px"
+           onmouseenter="this.style.borderColor='var(--caramel)';this.style.background='rgba(200,129,58,.08)'"
+           onmouseleave="this.style.borderColor='rgba(200,129,58,.25)';this.style.background='transparent'">
+          <img src="data:image/jpeg;base64,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" alt="Telegram" style="width:26px;height:26px;object-fit:contain;border-radius:50%" />
+        </a>
+      </div>
+    </div>
+
+    <div class="caramel-line mt-10 mb-6"></div>
+    <div class="flex flex-col sm:flex-row justify-between items-center gap-2 text-fog text-xs">
+      <p>© 2025 Crema Café, Львів. Всі права захищено.</p>
+      <div class="flex items-center gap-4">
+        <button onclick="openPrivacy()" class="hover:text-caramel transition-colors underline-offset-2 hover:underline">Політика конфіденційності</button>
+        <span class="opacity-30">·</span>
+        <p>Зроблено з ☕ та любов'ю у Львові</p>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<!-- ===================== SCRIPTS ===================== -->
+<style>
+  .tab-btn { color: var(--fog); border: 1px solid rgba(200,129,58,.15); }
+  .tab-btn:hover { color: var(--cream); border-color: rgba(200,129,58,.4); }
+  .tab-btn.active-tab { background: var(--caramel); color: #fff; border-color: var(--caramel); }
+</style>
+
+<script>
+  // Init Lucide icons
+  lucide.createIcons();
+
+  // ---- BURGER MENU ----
+  const burger = document.getElementById('burger');
+  const mobileMenu = document.getElementById('mobile-menu');
+  burger.addEventListener('click', () => {
+    mobileMenu.classList.toggle('open');
+  });
+  // Close on link click
+  mobileMenu.querySelectorAll('a').forEach(a => {
+    a.addEventListener('click', () => mobileMenu.classList.remove('open'));
+  });
+
+  // ---- SCROLL REVEAL ----
+  const revealEls = document.querySelectorAll('.reveal, .reveal-left, .reveal-right');
+  const observer = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (e.isIntersecting) { e.target.classList.add('visible'); observer.unobserve(e.target); }
+    });
+  }, { threshold: 0.12 });
+  revealEls.forEach(el => observer.observe(el));
+
+  // ---- MENU TABS ----
+  function switchTab(cat) {
+    document.querySelectorAll('.menu-cat').forEach(c => c.classList.add('hidden'));
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active-tab'));
+    document.getElementById('cat-' + cat).classList.remove('hidden');
+    document.getElementById('tab-' + cat).classList.add('active-tab');
+    // Re-trigger reveal for newly shown cards
+    document.querySelectorAll('#cat-' + cat + ' .reveal').forEach(el => {
+      el.classList.remove('visible');
+      setTimeout(() => observer.observe(el), 10);
+    });
+  }
+
+  // ---- FORM VALIDATION ----
+  function validateEmail(v) { return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v); }
+  function validatePhone(v) { return v.replace(/\D/g,'').length >= 9; }
+
+  function setError(id, errId, show) {
+    const el = document.getElementById(id);
+    const err = document.getElementById(errId);
+    if (show) { el.classList.add('error'); err.classList.add('show'); }
+    else { el.classList.remove('error'); err.classList.remove('show'); }
+    return !show;
+  }
+
+  document.getElementById('booking-form').addEventListener('submit', async function(e) {
+    e.preventDefault();
+    const name   = document.getElementById('b-name').value.trim();
+    const phone  = document.getElementById('b-phone').value.trim();
+    const date   = document.getElementById('b-date').value;
+    const time   = document.getElementById('b-time').value;
+    const guests = document.getElementById('b-guests').value;
+
+    const v = [
+      setError('b-name',   'err-name',   !name),
+      setError('b-phone',  'err-phone',  !validatePhone(phone)),
+      setError('b-date',   'err-date',   !date),
+      setError('b-time',   'err-time',   !time),
+      setError('b-guests', 'err-guests', !guests),
+    ];
+
+    if (!v.every(Boolean)) return;
+
+    const btn = document.getElementById('submit-btn');
+    btn.textContent = 'Надсилаємо...';
+    btn.disabled = true;
+
+    try {
+      const res = await fetch(this.action, {
+        method: 'POST',
+        headers: { 'Accept': 'application/json' },
+        body: new FormData(this)
+      });
+      if (res.ok) {
+        this.reset();
+        document.getElementById('form-success').classList.remove('hidden');
+        btn.style.display = 'none';
+        lucide.createIcons();
+      } else {
+        btn.textContent = 'Помилка. Спробуйте ще раз';
+        btn.disabled = false;
+      }
+    } catch {
+      btn.textContent = 'Помилка. Спробуйте ще раз';
+      btn.disabled = false;
+    }
+  });
+
+  // Clear errors on input
+  ['b-name','b-phone','b-date','b-time','b-guests'].forEach(id => {
+    document.getElementById(id).addEventListener('input', () => {
+      document.getElementById(id).classList.remove('error');
+      const errId = 'err-' + id.replace('b-','');
+      const errEl = document.getElementById(errId);
+      if (errEl) errEl.classList.remove('show');
+    });
+  });
+
+  // ---- GALLERY LIGHTBOX ----
+  function openLightbox(src, caption) {
+    const lb = document.getElementById('lightbox');
+    document.getElementById('lightbox-img').src = src;
+    document.getElementById('lightbox-caption').textContent = caption;
+    lb.style.display = 'flex';
+    document.body.style.overflow = 'hidden';
+    lucide.createIcons();
+  }
+  function closeLightbox() {
+    document.getElementById('lightbox').style.display = 'none';
+    document.body.style.overflow = '';
+  }
+  document.addEventListener('keydown', e => { if (e.key === 'Escape') { closeLightbox(); closePrivacy(); } });
+
+  // ---- PRIVACY POLICY MODAL ----
+  function openPrivacy() {
+    document.getElementById('privacy-modal').style.display = 'flex';
+    document.body.style.overflow = 'hidden';
+  }
+  function closePrivacy() {
+    document.getElementById('privacy-modal').style.display = 'none';
+    document.body.style.overflow = '';
+  }
+
+  // Set min date for booking
+  const dateInput = document.getElementById('b-date');
+  const today = new Date().toISOString().split('T')[0];
+  dateInput.setAttribute('min', today);
+</script>
+
+<!-- ===================== PRIVACY MODAL ===================== -->
+<div id="privacy-modal" onclick="if(event.target===this)closePrivacy()"
+     style="display:none;position:fixed;inset:0;z-index:9998;background:rgba(10,5,2,.92);backdrop-filter:blur(10px);align-items:center;justify-content:center;padding:1rem">
+  <div style="background:#1f1209;border:1px solid rgba(200,129,58,.25);border-radius:1.5rem;max-width:680px;width:100%;max-height:88vh;overflow-y:auto;position:relative">
+    <!-- Header -->
+    <div style="position:sticky;top:0;background:#1f1209;border-bottom:1px solid rgba(200,129,58,.12);padding:1.5rem 2rem;display:flex;align-items:center;justify-content:space-between;border-radius:1.5rem 1.5rem 0 0;z-index:2">
+      <div class="flex items-center gap-3">
+        <div style="width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,#c8813a,#7a4a1c);display:flex;align-items:center;justify-content:center">
+          <i data-lucide="shield" style="width:16px;height:16px;color:#fff"></i>
+        </div>
+        <h2 class="font-display text-xl font-semibold text-cream">Політика конфіденційності</h2>
+      </div>
+      <button onclick="closePrivacy()" style="background:rgba(200,129,58,.12);border:1px solid rgba(200,129,58,.25);border-radius:50%;width:36px;height:36px;display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--fog);transition:all .2s" onmouseenter="this.style.borderColor='var(--caramel)'" onmouseleave="this.style.borderColor='rgba(200,129,58,.25)'">
+        <i data-lucide="x" style="width:16px;height:16px"></i>
+      </button>
+    </div>
+
+    <!-- Content -->
+    <div style="padding:2rem;color:var(--fog);font-family:'DM Sans',sans-serif;font-size:.9rem;line-height:1.8">
+
+      <p style="color:var(--fog);font-size:.8rem;margin-bottom:1.5rem">Останнє оновлення: 1 січня 2025 р.</p>
+
+      <p style="color:var(--cream);margin-bottom:1.5rem">Кав'ярня <strong style="color:var(--caramel)">Crema</strong> (далі — «ми», «нас») поважає вашу приватність та зобов'язується захищати персональні дані, які ви надаєте нам під час використання нашого сайту та сервісів.</p>
+
+      <div style="margin-bottom:1.5rem">
+        <h3 class="font-display" style="color:var(--cream);font-size:1rem;margin-bottom:.6rem;display:flex;align-items:center;gap:.5rem">
+          <span style="color:var(--caramel)">1.</span> Які дані ми збираємо
+        </h3>
+        <p>Ми збираємо дані, які ви надаєте добровільно під час:</p>
+        <ul style="margin:.5rem 0 0 1rem;list-style:disc;display:flex;flex-direction:column;gap:.3rem">
+          <li>Заповнення форми бронювання столика (ім'я, телефон, email, дата та час, кількість гостей);</li>
+          <li>Надсилання запитів та побажань через форми зворотного зв'язку;</li>
+          <li>Підписки на новини та оновлення.</li>
+        </ul>
+        <p style="margin-top:.75rem">Також автоматично збираються технічні дані: IP-адреса, тип браузера, сторінки, які ви переглядали, час і тривалість сесії.</p>
+      </div>
+
+      <div style="margin-bottom:1.5rem">
+        <h3 class="font-display" style="color:var(--cream);font-size:1rem;margin-bottom:.6rem">
+          <span style="color:var(--caramel)">2.</span> Як ми використовуємо ваші дані
+        </h3>
+        <ul style="margin:.5rem 0 0 1rem;list-style:disc;display:flex;flex-direction:column;gap:.3rem">
+          <li>Підтвердження та управління бронюваннями столиків;</li>
+          <li>Зв'язок з вами щодо вашого замовлення чи запиту;</li>
+          <li>Покращення якості наших сервісів та сайту;</li>
+          <li>Надсилання інформаційних повідомлень (за вашої згоди).</li>
+        </ul>
+      </div>
+
+      <div style="margin-bottom:1.5rem">
+        <h3 class="font-display" style="color:var(--cream);font-size:1rem;margin-bottom:.6rem">
+          <span style="color:var(--caramel)">3.</span> Зберігання та захист даних
+        </h3>
+        <p>Ваші персональні дані зберігаються на захищених серверах. Ми вживаємо технічних та організаційних заходів для запобігання несанкціонованому доступу, втраті або розголошенню ваших даних. Дані бронювань зберігаються не довше ніж 12 місяців з моменту візиту.</p>
+      </div>
+
+      <div style="margin-bottom:1.5rem">
+        <h3 class="font-display" style="color:var(--cream);font-size:1rem;margin-bottom:.6rem">
+          <span style="color:var(--caramel)">4.</span> Передача третім особам
+        </h3>
+        <p>Ми не продаємо, не обмінюємо та не передаємо ваші персональні дані третім сторонам без вашої згоди, за винятком випадків, передбачених законодавством України, або коли це необхідно для обробки вашого запиту (наприклад, сервіс Formspree для обробки форм).</p>
+      </div>
+
+      <div style="margin-bottom:1.5rem">
+        <h3 class="font-display" style="color:var(--cream);font-size:1rem;margin-bottom:.6rem">
+          <span style="color:var(--caramel)">5.</span> Cookie-файли
+        </h3>
+        <p>Наш сайт може використовувати файли cookie для поліпшення користувацького досвіду та аналітики. Ви можете відключити cookie у налаштуваннях свого браузера, проте це може вплинути на функціональність сайту.</p>
+      </div>
+
+      <div style="margin-bottom:1.5rem">
+        <h3 class="font-display" style="color:var(--cream);font-size:1rem;margin-bottom:.6rem">
+          <span style="color:var(--caramel)">6.</span> Ваші права
+        </h3>
+        <p>Відповідно до законодавства України про захист персональних даних ви маєте право:</p>
+        <ul style="margin:.5rem 0 0 1rem;list-style:disc;display:flex;flex-direction:column;gap:.3rem">
+          <li>Отримати доступ до своїх персональних даних;</li>
+          <li>Вимагати виправлення або видалення своїх даних;</li>
+          <li>Відкликати згоду на обробку даних у будь-який момент;</li>
+          <li>Подати скаргу до уповноваженого органу із захисту персональних даних.</li>
+        </ul>
+      </div>
+
+      <div style="margin-bottom:1.5rem">
+        <h3 class="font-display" style="color:var(--cream);font-size:1rem;margin-bottom:.6rem">
+          <span style="color:var(--caramel)">7.</span> Контакти
+        </h3>
+        <p>З питань конфіденційності звертайтесь до нас:</p>
+        <p style="margin-top:.5rem">📧 <a href="mailto:privacy@crema.lviv.ua" style="color:var(--caramel)">privacy@crema.lviv.ua</a></p>
+        <p>📍 вул. Дорошенка 17, Львів, 79000, Україна</p>
+      </div>
+
+      <div style="background:rgba(200,129,58,.08);border:1px solid rgba(200,129,58,.2);border-radius:.75rem;padding:1rem;margin-top:1.5rem">
+        <p style="font-size:.8rem;color:var(--fog)">Використовуючи наш сайт або надсилаючи форму бронювання, ви погоджуєтесь з умовами цієї Політики конфіденційності. Ми залишаємо за собою право оновлювати цей документ. Актуальна версія завжди доступна на нашому сайті.</p>
+      </div>
+
+      <div style="margin-top:1.5rem;display:flex;justify-content:center">
+        <button onclick="closePrivacy()" class="btn-primary">Зрозуміло, дякую</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>
